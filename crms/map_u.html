@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hazard Map of Bohol</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/leaflet.js"></script>
+
+    <style>
+        #map {
+            height: 600px;
+            width: 100%;
+            border-radius: 10px;
+        }
+        .legend {
+            background: white;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            box-shadow: 0px 0px 5px rgba(0,0,0,0.5);
+        }
+        .legend span {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-right: 5px;
+        }
+        #townInfo {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f8f9fa;
+            margin-top: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid d-flex justify-content-between">
+            <a class="navbar-brand" href="#">Bohol Hazard Map</a>
+            <a href="home.html" class="btn btn-light btn-sm">Home</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0">Hazard Map</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="map"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!-- Town Information -->
+                <div id="townInfo">
+                    <h6><b>Town Info</b></h6>
+                    <hr>
+                    <p>Select a town zone to see details.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var map = L.map('map').setView([9.5984, 124.0937], 13);
+
+        // Load OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        let allZones = []; // All available data (without filtering)
+        let filteredZones = []; // Zones after filtering
+
+        // Fetch CRMS data and draw zones
+        fetch('get_data.php')  // This will be your PHP script that returns the data as JSON
+            .then(response => response.json())
+            .then(data => {
+                console.log("Data received:", data);
+                if (!Array.isArray(data)) {
+                    console.error("Invalid data format");
+                    return;
+                }
+                allZones = data;
+                filteredZones = data;  // Default to showing all zones
+                updateMap(); // Initialize map with all zones
+            })
+            .catch(error => console.error('Error loading data:', error));
+
+        function updateMap() {
+            // Remove existing circles on the map
+            map.eachLayer(layer => { if (layer instanceof L.Circle) map.removeLayer(layer); });
+
+            // Clear the town info section before displaying new data
+            document.getElementById("townInfo").innerHTML = `<h6><b>Town Info</b></h6><hr><p>Select a town zone to see details.</p>`;
+
+            // Loop through the filtered zones
+            filteredZones.forEach(zone => {
+                let vaccinatedList = zone.dogs.filter(dog => dog.vaccinated);
+                let nonVaccinatedList = zone.dogs.filter(dog => !dog.vaccinated);
+
+                let vaccinatedCount = vaccinatedList.length;
+                let nonVaccinatedCount = nonVaccinatedList.length;
+
+                // Calculate vaccination percentage
+                let vaccinatedPercentage = (vaccinatedCount / zone.dog_count) * 100;
+                let color;
+
+                // Assign color based on vaccination percentage
+                if (vaccinatedPercentage <= 30) {
+                    color = "red"; // 0-30% vaccinated
+                } else if (vaccinatedPercentage <= 70) {
+                    color = "yellow"; // 30-70% vaccinated
+                } else {
+                    color = "green"; // 70-100% vaccinated
+                }
+
+                let radius = zone.dog_count > 50 ? 750 : zone.dog_count > 20 ? 500 : 250;
+
+                // Draw circle on map
+                let circle = L.circle([zone.dLatitude, zone.dLongitude], {
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.5,
+                    radius: radius
+                }).addTo(map);
+
+                // Add popup with vaccination status
+                circle.bindPopup(` 
+                    <b>${zone.dTown}</b><br>
+                    Vaccinated Dogs: ${vaccinatedCount}<br>
+                    Non-Vaccinated Dogs: ${nonVaccinatedCount}<br>
+                    Vaccination Rate: ${vaccinatedPercentage.toFixed(2)}%
+                `);
+
+                // On click event to update the town info panel with dog details
+                circle.on('click', function() {
+                    let dogList = vaccinatedList.map(dog => `
+                        <li><strong>${dog.dName}</strong> - Owner: ${dog.dOwner} (✅ Vaccinated)</li>
+                    `).join('') + nonVaccinatedList.map(dog => `
+                        <li><strong>${dog.dName}</strong> - Owner: ${dog.dOwner} (❌ Not Vaccinated)</li>
+                    `).join('');
+
+                    document.getElementById("townInfo").innerHTML = `
+                        <h6><b>${zone.dTown}</b></h6>
+                        <hr>
+                        <p><strong>Vaccinated Dogs:</strong> ${vaccinatedCount}</p>
+                        <p><strong>Non-Vaccinated Dogs:</strong> ${nonVaccinatedCount}</p>
+                        <p><strong>Vaccination Rate:</strong> ${vaccinatedPercentage.toFixed(2)}%</p>
+                        <hr>
+                        <h6>Dog List:</h6>
+                        <ul>${dogList}</ul>
+                    `;
+                });
+            });
+        }
+
+        // Update the filtered zones based on the selected filter (vaccinated vs non-vaccinated)
+        function updateFilteredZones(filter) {
+            if (filter === 'vaccinated') {
+                filteredZones = allZones.filter(zone => zone.dogs.some(dog => dog.vaccinated));
+            } else if (filter === 'non-vaccinated') {
+                filteredZones = allZones.filter(zone => zone.dogs.some(dog => !dog.vaccinated));
+            } else {
+                filteredZones = allZones; // Show all zones
+            }
+            updateMap(); // Update map with the filtered zones
+        }
+
+        // Initially, update with the default filter (show all)
+        updateFilteredZones('all');
+
+        // Legend for vaccination percentage ranges
+        var legend = L.control({ position: "bottomleft" });
+
+        legend.onAdd = function(map) {
+            var div = L.DomUtil.create("div", "legend");
+            div.innerHTML += "<strong>Vaccination Rate</strong><br>";
+            div.innerHTML += '<span style="background: red"></span> 0-30% Vaccinated<br>';
+            div.innerHTML += '<span style="background: yellow"></span> 30-70% Vaccinated<br>';
+            div.innerHTML += '<span style="background: green"></span> 70-100% Vaccinated<br>';
+            return div;
+        };
+
+        legend.addTo(map);
+    </script>
+
+</body>
+</html>

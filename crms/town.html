@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registered Canines by Town</title>
+    <!-- Bootstrap CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap JS -->
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <!-- Google Charts -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart', 'bar']});
+        google.charts.setOnLoadCallback(drawCharts);
+
+        // Fetch the data from PHP
+        fetch('data.php') // Replace 'data.php' with the actual URL or path to your PHP script
+            .then(response => response.json())
+            .then(data => {
+                drawCharts(data);
+                populateTable(data);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+
+        function drawCharts(data) {
+            // Calculate totals for pie chart
+            var vaccinatedTotal = data.reduce((sum, town) => sum + town.vaccinated_count, 0);
+            var nonVaccinatedTotal = data.reduce((sum, town) => sum + (town.dog_count - town.vaccinated_count), 0);
+
+            // Pie Chart Data
+            var pieData = google.visualization.arrayToDataTable([
+                ['Status', 'Count'],
+                ['Vaccinated', vaccinatedTotal],
+                ['Non-Vaccinated', nonVaccinatedTotal]
+            ]);
+
+            var pieOptions = {
+                title: 'Vaccination Status of Registered Dogs',
+                is3D: true
+            };
+
+            var pieChart = new google.visualization.PieChart(document.getElementById('piechart'));
+            pieChart.draw(pieData, pieOptions);
+
+            // Bar Chart Data
+            var barData = google.visualization.arrayToDataTable([
+                ['Town', 'Registered Dogs', 'Vaccinated Dogs'],
+                ...data.map(town => [town.town, town.dog_count, town.vaccinated_count])
+            ]);
+
+            var barOptions = {
+                title: 'Dog Registration & Vaccination Per Town',
+                chartArea: {width: '50%'},
+                hAxis: {title: 'Number of Dogs', minValue: 0},
+                vAxis: {title: 'Towns'},
+                bars: 'horizontal'
+            };
+
+            var barChart = new google.visualization.BarChart(document.getElementById('barchart'));
+            barChart.draw(barData, barOptions);
+        }
+
+        // Populate the table dynamically
+        function populateTable(data) {
+            var tableBody = document.getElementById("dogTableBody");
+            tableBody.innerHTML = ''; // Clear existing table data
+
+            data.forEach(function(town) {
+                var vaccinationRate = (town.dog_count > 0) ? ((town.vaccinated_count / town.dog_count) * 100).toFixed(2) : 0;
+
+                var row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><a href="town_detail.html?town=${encodeURIComponent(town.town)}">${town.town}</a></td>
+                    <td>${town.dog_count}</td>
+                    <td>${town.vaccinated_count}</td>
+                    <td>${vaccinationRate}%</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Sorting Function
+        function sortTable(columnIndex) {
+            var table = document.querySelector("table");
+            var rows = Array.from(table.rows).slice(1); // Skip the header row
+            var sortedRows = rows.sort((rowA, rowB) => {
+                var a = rowA.cells[columnIndex].innerText.trim();
+                var b = rowB.cells[columnIndex].innerText.trim();
+                return isNaN(a) || isNaN(b) ? a.localeCompare(b) : a - b;
+            });
+            sortedRows.forEach(row => table.appendChild(row)); // Reorder the rows
+        }
+    </script>
+
+    <style>
+        th {
+            user-select: none; /* Prevent text selection */
+        }
+        .sort-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+        }
+        .sort-btn:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Registered Canines by Town</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th><button onclick="sortTable(0)" class="sort-btn">Barangay 🔽</button></th>
+                        <th><button onclick="sortTable(1)" class="sort-btn">Registered Dogs 🔽</button></th>
+                        <th><button onclick="sortTable(2)" class="sort-btn">Vaccinated Dogs 🔽</button></th>
+                        <th><button onclick="sortTable(3)" class="sort-btn">Vaccination Rate (%) 🔽</button></th>
+                    </tr>
+                </thead>
+                <tbody id="dogTableBody">
+                    <!-- Data will be inserted dynamically via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pie Chart for Vaccination Status -->
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <div id="piechart" style="width: 100%; height: 400px;"></div>
+            </div>
+
+            <!-- Bar Chart for Town Trends -->
+            <div class="col-md-6">
+                <div id="barchart" style="width: 100%; height: 400px;"></div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="home.html" class="btn btn-primary">Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

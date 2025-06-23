@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Pet</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script>
+        // JavaScript function to validate form inputs dynamically
+        function validateForm() {
+            var petName = document.getElementById("petname").value;
+            var breed = document.getElementById("breed").value;
+            var firstName = document.getElementById("firstName").value;
+            var middleInitial = document.getElementById("middleInitial").value;
+            var lastName = document.getElementById("lastName").value;
+            
+            if (petName == "" || breed == "" || firstName == "" || lastName == "") {
+                alert("All fields must be filled out");
+                return false;
+            }
+            return true;
+        }
+
+        // Dynamically handle the form submission via AJAX (optional)
+        function submitForm(event) {
+            event.preventDefault(); // Prevent form from submitting the traditional way
+
+            if (validateForm()) {
+                var formData = new FormData(document.querySelector("form"));
+                
+                fetch('register.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    if (data.includes("Registration successful")) {
+                        alert('Registration successful!');
+                        window.location.href = 'user_d.html'; // Redirect after success
+                    } else {
+                        alert('Error: ' + data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Something went wrong!');
+                });
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2>Register Your Pet</h2>
+        <!-- Adding the onsubmit event to handle the form submission -->
+        <form action="register.php" method="POST" class="mt-3" onsubmit="submitForm(event)">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="petname" class="form-label">Pet Name:</label>
+                    <input type="text" id="petname" name="petname" class="form-control" required placeholder="Enter pet's name">
+                </div>
+                <div class="col-md-6">
+                    <label for="breed" class="form-label">Breed:</label>
+                    <input type="text" id="breed" name="breed" class="form-control" required placeholder="Enter breed">
+                </div>
+            </div>
+
+            <!-- Owner's Full Name in one row using Bootstrap grid -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="firstName" class="form-label">Owner's First Name:</label>
+                    <input type="text" id="firstName" name="firstName" class="form-control" required placeholder="Enter owner's first name">
+                </div>
+                <div class="col-md-4">
+                    <label for="middleInitial" class="form-label">Middle Initial:</label>
+                    <input type="text" id="middleInitial" name="middleInitial" class="form-control" placeholder="Enter owner's middle initial (optional)">
+                </div>
+                <div class="col-md-4">
+                    <label for="lastName" class="form-label">Owner's Last Name:</label>
+                    <input type="text" id="lastName" name="lastName" class="form-control" required placeholder="Enter owner's last name">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+</body>
+
+
+</html>
