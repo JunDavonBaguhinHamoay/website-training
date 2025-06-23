@@ -1,9 +1,0 @@
-CREATE TABLE dog_bite_cases (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    victim_name VARCHAR(100),
-    dog_breed VARCHAR(100),
-    date_of_incident DATE,
-    location VARCHAR(255),
-    severity VARCHAR(50),
-    description TEXT
-);
