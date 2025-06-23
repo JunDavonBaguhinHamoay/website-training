@@ -1,0 +1,186 @@
+main {
+    width: 100%;
+    height: calc(100vh - 60px);
+    margin: 0;
+    background-image: url(../img/lila1.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    column-gap: 100px;
+    flex-direction: column;
+}
+
+main .main-intro h1{
+    font-size: 72px;
+    line-height: 85px;
+}
+
+main p{
+    font-size: 18px;
+    line-height: 30px;
+}
+
+main a{
+    margin-top: 30px;
+    font-size: 18px;
+    display: block;
+    background-color: var(--site-color-01);
+    padding: 10px;
+    width: fit-content;
+}
+
+main a:hover{
+    background-color: var(--site-color-01-hover);
+    transition: all ease-in-out 200ms;
+}
+
+main .main-quotes p{
+    border-left: 4px solid var(--site-color-01);
+    padding-left: 20px;
+    margin: 40px 0;
+}
+
+main .main-quotes p:nth-child(2){
+    margin-left: 200px;
+}
+
+
+main .main-intro{
+    position: relative;
+    right: 20vh;
+    padding-bottom: 8vh;
+    text-shadow: -2px 2px 4px #111;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+main .main-quotes{
+    position: relative;
+    right: 4vh;
+    padding-bottom: 8vh;
+    text-shadow: -2px 2px 4px #111;
+}
+
+
+/* Category */
+
+.index-category {
+    width: 100%;
+    padding: 60px 0;
+    background-color: aliceblue;
+    display: flex;
+    justify-content: center;
+    column-gap: 30px;
+    flex-wrap: wrap;
+}
+
+.index-category p{
+    color: #111;
+    text-align: center;
+    padding-bottom: 40px;
+    flex-basis: 100%;
+    text-transform: uppercase;
+    font-size: 32px;
+}
+
+.index-category-box {
+    width: 150px;
+    height: 150px;
+    background-color: #111;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.index-category-box:nth-child(2) {
+    background-image: url(../img/data.jpg);
+}
+
+.index-category-box:nth-child(3) {
+    background-image: url(../img/map.png);
+}
+
+.index-category-box:nth-child(4) {
+    background-image: url(../img/data_chart.jpg);
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: aliceblue;
+    opacity: 0.5;
+    transition: all ease-in-out 200ms;
+}
+
+.index-category-box:hover .overlay {
+    opacity: 0;
+}
+
+.index-category-box h3 {
+    font-size: 22px;
+    line-height: 28px;
+    text-align: center;
+    text-shadow: -2px 2px 4px #111;
+    z-index: 100;
+}
+
+/* About */
+
+.index-about{
+    width: 100%;
+    padding: 60px 0;
+    background-color: #111;
+}
+
+.index-about-flex{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 60px;
+}
+
+.index-about-img img{
+    width: 300px;
+    border-radius: 300px;
+}
+
+.index-about-txt{
+    flex-basis: 455px;
+}
+
+.index-about-txt p{
+    padding: 30px 0;
+}
+
+.index-about-txt a{
+    font-size: 18px;
+    display: block;
+    height: 36px;
+    line-height: 36px;
+    background-color: var(--site-color-01);
+    padding: 0 20px;
+    width: fit-content;
+}
+
+.index-about-txt a:hover{
+    background-color: var(--site-color-01-hover);
+    transition: all ease-in-out 200ms;
+}
+
+/* AJAX CONTENT */
+
+#content {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
