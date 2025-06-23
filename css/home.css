@@ -1,0 +1,249 @@
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    column-gap: 100px;
+}
+
+main .main-intro h1{
+    font-size: 72px;
+    line-height: 85px;
+}
+
+main p{
+    font-size: 18px;
+    line-height: 30px;
+}
+
+main a{
+    margin-top: 30px;
+    font-size: 18px;
+    display: block;
+    background-color: var(--site-color-01);
+    padding: 10px;
+    width: fit-content;
+}
+
+main a:hover{
+    background-color: var(--site-color-01-hover);
+    transition: all ease-in-out 200ms;
+}
+
+main .main-quotes p{
+    border-left: 4px solid var(--site-color-01);
+    padding-left: 20px;
+    margin: 40px 0;
+}
+
+main .main-quotes p:nth-child(2){
+    margin-left: 200px;
+}
+
+
+main .main-intro{
+    position: relative;
+    right: 20vh;
+    padding-bottom: 8vh;
+    text-shadow: -2px 2px 4px #111;
+}
+
+main .main-quotes{
+    position: relative;
+    right: 4vh;
+    padding-bottom: 8vh;
+    text-shadow: -2px 2px 4px #111;
+}
+
+/* Updates */
+
+.update{
+    border-left: 4px solid var(--site-color-01);
+    padding-left: 20px;
+    margin: 40px 0;
+    text-shadow: -2px 2px 4px #111;
+}
+
+.update-intro{
+    text-shadow: -2px 2px 4px #111;
+}
+
+
+/* Category */
+
+.index-category {
+    width: 100%;
+    padding: 60px 0;
+    background-color: aliceblue;
+    display: flex;
+    justify-content: center;
+    column-gap: 30px;
+    flex-wrap: wrap;
+}
+
+.index-category p{
+    color: #111;
+    text-align: center;
+    padding-bottom: 40px;
+    flex-basis: 100%;
+    text-transform: uppercase;
+    font-size: 32px;
+}
+
+.index-category-box {
+    width: 130px;
+    height: 130px;
+    background-color: #111;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.index-category-box:nth-child(2) {
+    background-image: url(../img/planets.png);
+}
+
+.index-category-box:nth-child(3) {
+    background-image: url(../img/stars.png);
+}
+
+.index-category-box:nth-child(4) {
+    background-image: url(../img/universe.png);
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: aliceblue;
+    opacity: 0.5;
+    transition: all ease-in-out 200ms;
+}
+
+.index-category-box:hover .overlay {
+    opacity: 0;
+}
+
+.index-category-box h3 {
+    font-size: 22px;
+    line-height: 28px;
+    text-align: center;
+    text-shadow: -2px 2px 4px #111;
+    z-index: 100;
+}
+
+/* About */
+
+.index-about{
+    width: 100%;
+    padding: 60px 0;
+    background-color: #111;
+}
+
+.index-about-flex{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 60px;
+}
+
+.index-about-img img{
+    width: 300px;
+    border-radius: 300px;
+}
+
+.index-about-txt{
+    flex-basis: 455px;
+}
+
+.index-about-txt p{
+    padding: 30px 0;
+}
+
+.index-about-txt a{
+    font-size: 18px;
+    display: block;
+    height: 36px;
+    line-height: 36px;
+    background-color: var(--site-color-01);
+    padding: 0 20px;
+    width: fit-content;
+}
+
+.index-about-txt a:hover{
+    background-color: var(--site-color-01-hover);
+    transition: all ease-in-out 200ms;
+}
+
+.index-about-skill{
+    flex-basis: 350px;
+}
+
+.index-about-skill-bar{
+    width: calc(100% - 8px);
+    height: 20px;
+    border: 4px solid #6e7683;
+}
+
+.index-about-skill-bar-fill{
+    height: 100%;
+    background-color: var(--site-color-01);
+}
+
+.htmlcss{
+    width: 68%;
+}
+
+.php{
+    width: 78%;
+}
+
+.java{
+    width: 78%;
+}
+
+.android{
+    width: 24%;
+}
+
+.photoshop{
+    width: 65%;
+}
+
+@media only screen and (max-width: 600px) {
+
+    main {
+        align-items: flex-end;
+    }
+
+    main .main-intro {
+        padding-bottom: 8vh;
+    }
+
+    main .main-intro h1{
+        font-size: 5rem;
+        line-height: 1.25; 
+        text-align: center;
+    }
+    
+    main p{
+        text-align: center;
+        padding: 0 10%;
+        font-size: 1.6rem;
+        line-height: 1.75;
+    }
+    
+    main a{
+        margin: 30px auto;
+    }
+    
+    main .main-quotes{
+        display: none;
+    }
+    
+}
